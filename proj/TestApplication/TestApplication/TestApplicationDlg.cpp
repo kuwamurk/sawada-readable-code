@@ -65,7 +65,8 @@ BEGIN_MESSAGE_MAP(CTestApplicationDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-    ON_BN_CLICKED(IDC_BUTTON1, &CTestApplicationDlg::OnBnClickedButton1)
+    ON_BN_CLICKED(IDC_ACTION, &CTestApplicationDlg::OnBnClickedAction)
+    ON_BN_CLICKED(IDC_SAVE, &CTestApplicationDlg::OnBnClickedLoad)
 END_MESSAGE_MAP()
 
 
@@ -156,7 +157,29 @@ HCURSOR CTestApplicationDlg::OnQueryDragIcon()
 
 
 
-void CTestApplicationDlg::OnBnClickedButton1()
+void CTestApplicationDlg::OnBnClickedAction()
 {
     m_stMessage.SetWindowTextW(L"上手");
+}
+
+
+void CTestApplicationDlg::OnBnClickedLoad()
+{
+    CString strDicFile;
+    getDictionaryFilePath(strDicFile);
+
+    BYTE byRead[READ_SIZE];
+    ZeroMemory(byRead, READ_SIZE);
+
+    HANDLE hFile = CreateFile(strDicFile, GENERIC_READ, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    DWORD dwReaded = 0;
+    ReadFile(hFile, byRead, READ_SIZE, &dwReaded, NULL);
+
+    CString strMessage = reinterpret_cast<LPCTSTR>(byRead);
+    m_stMessage.SetWindowTextW(strMessage);
+}
+
+void CTestApplicationDlg::getDictionaryFilePath(CString& strDicFile)
+{
+    strDicFile = _T("C:\\Git\\Home\\sawada-readable-code\\proj\\TestApplication\\dictionary-data.txt");
 }

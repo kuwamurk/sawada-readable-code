@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#define READ_SIZE   (1024)
 
 // CTestApplicationDlg ダイアログ
 class CTestApplicationDlg : public CDialogEx
@@ -33,5 +33,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
     CStatic m_stMessage;
 public:
-    afx_msg void OnBnClickedButton1();
+
+    afx_msg void OnBnClickedAction();
+    afx_msg void OnBnClickedLoad();
+
+    void getDictionaryFilePath(CString& strDicFile);
 };
