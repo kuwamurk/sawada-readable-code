@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "afxwin.h"
 #define READ_SIZE   (1024)
 
 // CTestApplicationDlg ダイアログ
@@ -32,10 +33,17 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
     CStatic m_stMessage;
+    
+    //!< 次の単語を取得する
+    bool getNextTitleWord(CString &titleWord);
+
+    CString m_titleWords;   //!< 単語ファイルから読み出した単語文字列
+    int m_prePos;     //!< 今、読み込んでいる単語位置
 public:
 
     afx_msg void OnBnClickedAction();
     afx_msg void OnBnClickedLoad();
 
     void getDictionaryFilePath(CString& strDicFile);
+    CListBox m_messageList;
 };

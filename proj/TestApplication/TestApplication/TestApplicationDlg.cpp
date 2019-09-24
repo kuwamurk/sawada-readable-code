@@ -51,6 +51,8 @@ END_MESSAGE_MAP()
 
 CTestApplicationDlg::CTestApplicationDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_TESTAPPLICATION_DIALOG, pParent)
+    , m_titleWords()
+    , m_prePos(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -59,6 +61,7 @@ void CTestApplicationDlg::DoDataExchange(CDataExchange* pDX)
 {
     CDialogEx::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_MESSAGE, m_stMessage);
+    DDX_Control(pDX, IDC_LIST1, m_messageList);
 }
 
 BEGIN_MESSAGE_MAP(CTestApplicationDlg, CDialogEx)
@@ -175,11 +178,36 @@ void CTestApplicationDlg::OnBnClickedLoad()
     DWORD dwReaded = 0;
     ReadFile(hFile, byRead, READ_SIZE, &dwReaded, NULL);
 
-    CString strMessage = reinterpret_cast<LPCTSTR>(byRead);
-    m_stMessage.SetWindowTextW(strMessage);
+    m_titleWords = reinterpret_cast<LPCTSTR>(byRead);
+//    m_stMessage.SetWindowTextW(m_titleWords);
+
+    // ListBoxに単語を追加する
+    bool bNext = false;
+    do{
+        CString nextWord;
+        bNext = getNextTitleWord(nextWord);
+        if (nextWord.IsEmpty()) {
+            break;
+        }
+        m_messageList.AddString(nextWord);
+    } while (bNext);
+
+    CloseHandle(hFile); // ファイルの後始末
 }
 
 void CTestApplicationDlg::getDictionaryFilePath(CString& strDicFile)
 {
-    strDicFile = _T("C:\\Git\\Home\\sawada-readable-code\\proj\\TestApplication\\dictionary-data.txt");
+    strDicFile = _T("C:\\readablecode\\test3\\sawada-readable-code\\proj\\TestApplication\\dictionary-data.txt");
+}
+
+bool CTestApplicationDlg::getNextTitleWord(CString &titleWord)
+{
+    int pos = m_titleWords.Find(_T("\n"), m_prePos+1);
+    if ( pos == -1 ){
+        titleWord = m_titleWords.Right(pos);
+        return false;
+    }
+    titleWord = m_titleWords.Mid(m_prePos, pos - m_prePos);
+    m_prePos = pos;
+    return true;
 }
